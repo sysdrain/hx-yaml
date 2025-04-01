@@ -102,8 +102,8 @@ class Ints
 
 		#if js
 		
-		var v = untyped __js__("parseInt")(value, radix);
-		return (untyped __js__("isNaN")(v)) ? null : v;
+		var v = js.Syntax.code("parseInt")(value, radix);
+		return (js.Syntax.code("isNaN")(v)) ? null : v;
 		
 		#elseif flash9
 		
