@@ -247,11 +247,6 @@ class Parser
 			tagMap.set(handle, prefix);
 		});
 
-		if (validate && PATTERN_NON_PRINTABLE.match(this.input))
-		{
-			throwError('the stream contains non-printable characters');
-		}
-
 		while (CHAR_SPACE == character)
 		{
 			lineIndent += 1;
@@ -647,7 +642,7 @@ class Parser
 
 		if (result != null) 
 		{
-			#if sys
+			#if (sys && !hl)
 			result = Utf8.decode(result); // convert back into native encoding
 			#end
 			return true;
@@ -689,7 +684,7 @@ class Parser
 				} 
 				else 
 				{
-					#if sys
+					#if (sys && !hl)
 					result = Utf8.decode(result);
 					#end
 					return true;
@@ -738,7 +733,7 @@ class Parser
 				captureSegment(captureStart, position, true);
 				character = Utf8.charCodeAt(input, ++position);
 
-				#if sys
+				#if (sys && !hl)
 				result = Utf8.decode(result);
 				#end
 				return true;
@@ -973,7 +968,7 @@ class Parser
 						try
 						{
 							_result = type.resolve(result, usingMaps, false);
-							#if sys
+							#if (sys && !hl)
 							if (Std.isOfType(_result, String))
 								_result = Utf8.decode(_result);
 							#end
@@ -1002,7 +997,7 @@ class Parser
 					try
 					{
 						_result = t.resolve(result, usingMaps, true);
-						#if sys
+						#if (sys && !hl)
 						if (Std.isOfType(_result, String))
 							_result = Utf8.decode(_result);
 						#end
@@ -1245,7 +1240,7 @@ class Parser
 			{
 				if (CHOMPING_KEEP == chomping) 
 				{
-					#if sys
+					#if (sys && !hl)
 					result += Utf8.encode(Strings.repeat('\n', emptyLines + 1));
 					#else
 					result += Strings.repeat('\n', emptyLines + 1);
@@ -1264,7 +1259,7 @@ class Parser
 			{
 				if (CHAR_SPACE == character || CHAR_TAB == character) 
 				{
-					#if sys
+					#if (sys && !hl)
 					result += Utf8.encode(Strings.repeat('\n', emptyLines + 1));
 					#else
 					result += Strings.repeat('\n', emptyLines + 1);
@@ -1273,7 +1268,7 @@ class Parser
 				}
 				else if (0 == emptyLines) 
 				{
-					#if sys
+					#if (sys && !hl)
 					result += Utf8.encode(' ');
 					#else
 					result += ' ';
@@ -1283,7 +1278,7 @@ class Parser
 				} 
 				else 
 				{
-					#if sys
+					#if (sys && !hl)
 					result += Utf8.encode(Strings.repeat('\n', emptyLines));
 					#else
 					result += Strings.repeat('\n', emptyLines);
@@ -1293,7 +1288,7 @@ class Parser
 			} 
 			else 
 			{
-				#if sys
+				#if (sys && !hl)
 				result += Utf8.encode(Strings.repeat('\n', emptyLines + 1));
 				#else
 				result += Strings.repeat('\n', emptyLines + 1);
@@ -1309,7 +1304,7 @@ class Parser
 			captureSegment(captureStart, position, false);
 		}
 		
-		#if sys
+		#if (sys && !hl)
 		result = Utf8.decode(result);
 		#end
 
@@ -1860,11 +1855,6 @@ class Parser
 		composeNode(lineIndent - 1, CONTEXT_BLOCK_OUT, false, true);
 		skipSeparationSpace(true, -1);
 
-		if (validate && checkLineBreaks && PATTERN_NON_ASCII_LINE_BREAKS.match(yaml.util.Utf8.substring(input, documentStart, position)))
-		{
-			throwWarning('non-ASCII line breaks are interpreted as content');
-		}
-
 		output(result);
 
 		if (position == lineStart && testDocumentSeparator())
@@ -1992,6 +1982,7 @@ class Parser
 		hash;
 	};
 
+	/*
 	#if (eval || neko || cpp || display)
 	public static var PATTERN_NON_PRINTABLE         = ~/[\x{00}-\x{08}\x{0B}\x{0C}\x{0E}-\x{1F}\x{7F}-\x{84}\x{86}-\x{9F}\x{FFFE}\x{FFFF}]/u;
 	#elseif (js || flash9 || java)
@@ -2007,6 +1998,7 @@ class Parser
 	#else
 	#error "Compilation target not supported due to lack of Unicode RegEx support."
 	#end
+	*/
 	
 	public static var PATTERN_FLOW_INDICATORS       = ~/[,\[\]\{\}]/u;
 	public static var PATTERN_TAG_HANDLE            = ~/^(?:!|!!|![a-z\-]+!)$/iu;
